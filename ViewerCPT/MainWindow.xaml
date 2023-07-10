@@ -1,0 +1,21 @@
+﻿<Window x:Class="ViewerCPT.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ViewerCPT"
+        mc:Ignorable="d"
+        Title="ViewerCPT" Height="450" Width="800">
+    <Grid>
+        <DockPanel Width="200" HorizontalAlignment="Left">
+            <TreeView x:Name="treeView" Width="186" HorizontalAlignment="Left"/>
+        </DockPanel>
+        <Grid Name="ViewGrid" Margin="194,0,0,0">
+            <DockPanel VerticalAlignment="Top" Height="40">
+                <Button Name="SaveNodes" HorizontalAlignment="Left" Width="106" Height="30" Content="Сохранить узлы" 
+                        Click="SaveNodeXML" IsEnabled="False"/>
+            </DockPanel>
+            <WebBrowser x:Name="XMLViewer" Margin="5,40,5,5"/>
+        </Grid>
+    </Grid>
+</Window>
