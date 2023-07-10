@@ -11,26 +11,33 @@ namespace ViewerCPT
 {
     public partial class MainWindow : Window
     {
+        // Переменная для работы с файлом XML
         XmlDocument xml;
+        // Список элементов типа TreeItem
         List<TreeItem> treeItems;
+        // Массив выделенных элементов дерева
         TreeViewItem[] selectedItems;
 
         public MainWindow()
         {
             InitializeComponent();
             selectedItems = new TreeViewItem[1];
-
+            
+            // Создание элементов дерева
             var parcel = new TreeViewItem { Header = "Parcel"};
             var objectRealty = new TreeViewItem { Header = "ObjectRealty"};
             var spatialData = new TreeViewItem { Header = "SpatialData" };
             var bound = new TreeViewItem { Header = "Bound" };
             var zone = new TreeViewItem { Header = "Zone" };
 
+            // Загрузка XML файла
             xml = new XmlDocument();
             xml.Load("24_21_1003001_2017-05-29_kpt11.xml");
 
+            // Путь к корневому узлу
             XmlNode cadastral_block = xml.SelectSingleNode("/extract_cadastral_plan_territory/cadastral_blocks/cadastral_block");
 
+            // Заполнение массива элементами типа TreeItem
             treeItems = new List<TreeItem>
             {
                 new TreeItem(parcel,
@@ -47,6 +54,7 @@ namespace ViewerCPT
                     cadastral_block.SelectSingleNode("zones_and_territories_boundaries").ChildNodes, "reg_numb_border")
             };
 
+            // Определение событий для элементов дерева
             foreach (TreeItem treeItem in treeItems)
             {
                 foreach (TreeViewItem treeViewItem in treeItem.Item.Items)
@@ -56,6 +64,7 @@ namespace ViewerCPT
                 }
             }
 
+            // Отображение элементов в дереве
             treeView.ItemsSource = new List<TreeViewItem> {
                 parcel,
                 objectRealty,
@@ -65,6 +74,7 @@ namespace ViewerCPT
             };
         }
 
+        // Событие при снятии выделения с элемента дерева
         private void TreeViewItem_Unselected(object sender, RoutedEventArgs e)
         {
             SaveNodes.IsEnabled = false;
@@ -75,6 +85,7 @@ namespace ViewerCPT
             }
         }
 
+        // Убрать заливку с элементов дерева
         private void ClearTreeViewItems()
         {
             foreach (TreeItem treeItem in treeItems)
@@ -83,26 +94,31 @@ namespace ViewerCPT
             }
         }
 
+        // Установить заливку для элементов дерева
         private void SelectTreeViewItem(TreeViewItem item)
         {
             item.Background = new SolidColorBrush(SystemColors.HighlightColor);
             item.Foreground = new SolidColorBrush(SystemColors.HighlightTextColor);
         }
 
+        // Проверка на нажитие клавиши Ctrl
         private bool IsPressedCtrl()
         {
             return Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
         }
 
+        // Проверка на нажитие клавиши Shift
         private bool IsPressedShift()
         {
             return Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
         }
 
+        // Проверка на заполненность массива с выделенными элементами дерева
         private bool IsHaveSelectedItems() {
             return selectedItems[0] != null ? true : false;
         }
 
+        // Событие при выделении элемента дерева
         private void TreeViewItem_Selected(object sender, RoutedEventArgs e)
         {
             var item = (TreeViewItem)sender;
@@ -180,6 +196,7 @@ namespace ViewerCPT
             }
         }
 
+        // Сохранение выделенных элементов дерева в XML-файл
         private void SaveNodeXML(object sender, RoutedEventArgs e)
         {
             var doc = new XmlDocument();
@@ -207,11 +224,14 @@ namespace ViewerCPT
             }
         }
     }
-
+    // Класс для элемента дерева со списком узлов и названием идентификатора
     class TreeItem
     {
+        // Элемент дерева
         public TreeViewItem Item;
+        // Список узлов
         public XmlNodeList Nodes;
+        // Название идентификатора
         public string NameKey;
         
         public TreeItem(TreeViewItem Item, XmlNodeList Nodes, string NameKey)
@@ -222,7 +242,7 @@ namespace ViewerCPT
 
             FillItem();
         }
-
+        // Поиск узла по названию идентификатора
         public XmlNode SearchKey(string key)
         {
             foreach (XmlNode node in Nodes)
@@ -235,7 +255,7 @@ namespace ViewerCPT
 
             return null;
         }
-
+        // Поиск ключа в дереве
         private bool IsHaveKey(XmlNode node, string key)
         {
             if (node.Name == NameKey && node.InnerText == key)
@@ -256,7 +276,7 @@ namespace ViewerCPT
 
             return false;
         }
-
+        // Заполнить элементами дерево
         public void FillItem()
         {
             foreach (XmlNode node in Nodes)
@@ -269,7 +289,7 @@ namespace ViewerCPT
                 }
             }
         }
-
+        // Получить идентификатор узла
         private string GetKeyNode(XmlNode node)
         {
             if (node.Name == NameKey)
@@ -291,7 +311,7 @@ namespace ViewerCPT
 
             return null;
         }
-
+        // Очистить элемент дерева
         public void ClearTreeViewItem()
         {
             foreach (TreeViewItem tvItem in Item.Items)
